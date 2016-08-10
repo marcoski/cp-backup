@@ -1,0 +1,45 @@
+{
+    "name": "commonhelp/backup",
+    "type": "cli",
+    "description": "CLI application due to manage data backup",
+    "keywords": ["php", "cli", "application"],
+    "homepage": "https://github.com/marcoski/cp-backup",
+    "license": "GNUv3",
+    "authors": [
+        {
+            "name": "Marco 'Marcoski' Trognoni",
+            "email": "mtrognon@commonhelp.it",
+            "homepage": "http://www.commonhelp.it",
+            "role": "Chief Developer"
+        }
+    ],
+    "autoload": {
+    	"psr-4": {
+    		"Backup\\": "src/"
+    	}
+    },
+    "repositories": [
+        {
+            "type": "git",
+            "url": "https://github.com/marcoski/commonhelp-ssh"
+        },
+        {
+        		"type": "git",
+        		"url": "https://github.com/marcoski/commonhelp-resource"
+        },
+        {
+        		"type": "git",
+        		"url": "https://github.com/marcoski/commonhelp-filesystem"
+        }
+    ],
+    "require": {
+     	"php": ">=5.5",
+     	"symfony/process": "~3.1",
+     	"symfony/console": "~3.1",
+     	"symfony/finder": "~3.1",
+     	"symfony/event-dispatcher": "~3.1",
+     	"commonhelp/resource": "dev-master",
+     	"commonhelp/ssh": "dev-master",
+     	"commonhelp/filesystem": "dev-master"
+    }
+}
