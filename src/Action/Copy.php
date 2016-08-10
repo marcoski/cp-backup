@@ -6,6 +6,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Process\ProcessBuilder;
 use Symfony\Component\Finder\SplFileInfo;
+use Symfony\Component\Console\Helper\ProgressBar;
 
 class Copy extends BaseAction{
 	
@@ -14,12 +15,19 @@ class Copy extends BaseAction{
 	 */
 	protected $finder;
 	
+	/**
+	 * @var ProgressBar
+	 */
+	protected $progress;
+	
 	public function __construct(InputInterface $input, OutputInterface $output){
 		parent::__construct($input, $output);
 		$this->finder = new Finder();
+		ProgressBar::setFormatDefinition('copy', '%current%/%max% [%bar%] %percent:3s%% Time to finish: %estimated:-6s%');
 	}
 	
 	public function run(){
+		$this->finder->ignoreUnreadableDirs();
 		$this->finder->files()->in(sys_get_temp_dir())->name($this->getBackupFilePattern());
 		foreach($this->finder as $file){
 			$this->copy($file);
@@ -41,6 +49,8 @@ class Copy extends BaseAction{
 		$copyBuilder->setPrefix('cp');
 		$copy = $copyBuilder->setArguments(array($file->getRealPath(), $this->input->getArgument('destination')))->getProcess();
 		$copy->start();
+		$this->progress = new ProgressBar($this->output, $file->getSize());
+		$this->progress->setFormat('copy');
 		$this->progress->start();
 		while($copy->isRunning()){
 			$this->progress->advance();

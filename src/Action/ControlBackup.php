@@ -24,10 +24,10 @@ class ControlBackup extends BaseAction{
 		$this->finder();
 		foreach($this->finder as $file){
 			if($this->isRemovable($file)){
-				$this->remove($file);
-				$this->output->writeln(sprintf('<info>%s backup file removed older then a %s</info>', $file->getRealPath(), $this->getInfoTimeMessage()));
+				//$this->remove($file);
+				$this->output->writeln(sprintf('<info>%s backup file removed older then a %s</info>', $this->getFilePath($file), $this->getInfoTimeMessage()));
 			}else{
-				$this->output->writeln(sprintf('<info>%s backup file <comment>not</comment> removed yunger then a %s</info>', $file->getRealPath(), $this->getInfoTimeMessage()));
+				$this->output->writeln(sprintf('<info>%s backup file <comment>not</comment> removed yunger then a %s</info>', $this->getFilePath($file), $this->getInfoTimeMessage()));
 			}
 		}
 	}
@@ -47,9 +47,8 @@ class ControlBackup extends BaseAction{
 	
 	protected function isRemovable(SplFileInfo $file){
 		$today = new \DateTime(null, new \DateTimeZone('GMT'));
-		$fileCTime = \DateTime::createFromFormat('U', $file->getCTime(), new \DateTimeZone('GMT'));
+		$fileCTime = $this->getFileCTime($file);
 		$dateDiff = $fileCTime->diff($today);
-		
 		switch($this->input->getOption('delete')){
 			case BackupCommand::WEEKELY:
 				if($dateDiff->days > 7){
@@ -71,6 +70,14 @@ class ControlBackup extends BaseAction{
 		$removeBuilder->setPrefix('rm');
 		$remove = $removeBuilder->setArguments(array($file->getRealPath()))->getProcess();
 		$remove->run();
+	}
+	
+	protected function getFileCTime(SplFileInfo $file){
+		return \DateTime::createFromFormat('U', $file->getCTime(), new \DateTimeZone('GMT'));
+	}
+	
+	protected function getFilePath(SplFileInfo $file){
+		return $file->getRealPath();
 	}
 	
 	private function getInfoTimeMessage(){

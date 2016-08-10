@@ -25,8 +25,18 @@ class ControlBackupRemote extends ControlBackup{
 	}
 	
 	protected function remove(SplFileInfo $file){
-		$this->output->writeln(sprintf('Remove %s to %s', $file->getRealPath(), $this->input->getArgument('destination')));
-		$this->sftp->remove($file->getRealPath());
+		$remoteFilePath = $this->getFilePath($file);
+		$this->output->writeln(sprintf('Remove %s to %s', $remoteFilePath, $this->input->getArgument('destination')));
+		$this->sftp->remove($remoteFilePath);
+	}
+	
+	protected function getFileCTime(SplFileInfo $file){
+		preg_match($this->getBackupFilePattern(), $file->getFilename(), $match);
+		return \DateTime::createFromFormat('U', $match[1], new \DateTimeZone('GMT'));
+	}
+	
+	protected function getFilePath(SplFileInfo $file){
+		return $this->input->getArgument('destination') . $file->getFilename();
 	}
 	
 }

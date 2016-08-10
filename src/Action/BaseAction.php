@@ -6,7 +6,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 abstract class BaseAction implements ActionInterface{
 	
-	const BACKUP_FILE_PATTERN = '/^%s_[0-9]*.%s/';
+	const BACKUP_FILE_PATTERN = '/^%s_([0-9]*).%s/';
 	
 	/**
 	 * @var InputInterface
